@@ -1,4 +1,5 @@
 import { decode, links } from "./data.js";
+import { vcard, fileName } from "./vcard.js";
 
 const $ = id => document.getElementById(id);
 
@@ -91,6 +92,24 @@ async function show() {
   $("edit").href = "./#" + code;
   $("card").hidden = false;
 }
+
+$("save").addEventListener("click", () => {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([vcard(card)], { type: "text/vcard" }));
+  a.download = fileName(card);
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+});
+
+$("share").addEventListener("click", async () => {
+  const btn = $("share");
+  try {
+    if (navigator.share) return await navigator.share({ title: card.name, url: location.href });
+    await navigator.clipboard.writeText(location.href);
+    btn.textContent = "Link copied";
+    setTimeout(() => (btn.textContent = "Share"), 1500);
+  } catch (e) {}
+});
 
 addEventListener("hashchange", () => location.reload());
 show();
