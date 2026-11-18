@@ -1,6 +1,8 @@
 import { EMPTY, SAMPLE, FIELDS, encode, decode, cardUrl } from "./data.js";
+import { render, png, fontsReady } from "./screen.js";
 
 const form = document.getElementById("form");
+const screen = document.getElementById("screen");
 const linkEl = document.getElementById("link");
 const openEl = document.getElementById("open");
 const copyEl = document.getElementById("copy");
@@ -37,8 +39,17 @@ async function update() {
   const url = cardUrl(code);
   linkEl.value = url;
   openEl.href = url;
+  render(screen, card);
   try { localStorage.setItem(DRAFT, code); } catch (e) {}
 }
+
+document.getElementById("png").addEventListener("click", async () => {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(await png(screen));
+  a.download = "inkcard.png";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+});
 
 copyEl.addEventListener("click", async () => {
   try {
@@ -60,5 +71,7 @@ form.addEventListener("submit", e => e.preventDefault());
   if (start) history.replaceState(null, "", location.pathname);
   if (!start) try { start = await decode(localStorage.getItem(DRAFT)); } catch (e) {}
   fill(start || SAMPLE);
-  update();
+  await update();
+  await fontsReady();
+  render(screen, card);
 })();
