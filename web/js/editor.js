@@ -13,6 +13,7 @@ const DRAFT = "inkcard-draft";
 
 let card = { ...SAMPLE };
 let code = "";
+let pending = 0;
 
 function fill(c) {
   for (const k of FIELDS) {
@@ -35,9 +36,13 @@ function read() {
 }
 
 async function update() {
-  card = read();
+  const id = ++pending;
+  const next = read();
+  const nextCode = await encode(next);
+  if (id !== pending) return; // a newer edit already started
+  card = next;
+  code = nextCode;
   bioCount.textContent = `${card.bio.length}/140`;
-  code = await encode(card);
   const url = cardUrl(code);
   linkEl.value = url;
   openEl.href = url;
