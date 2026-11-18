@@ -106,7 +106,37 @@ function drawText(ctx, card, right) {
   });
 }
 
-export function render(canvas, card) {
+// Smallest QR code for the text; a module needs at least 2 px to scan off the panel
+const QR_MAX = H - 6;
+function makeQr(text) {
+  if (!text || !window.qrcode) return null;
+  qrcode.stringToBytes = qrcode.stringToBytesFuncs["UTF-8"];
+  let found = null;
+  for (const ecc of ["M", "L"]) {
+    try {
+      const q = qrcode(0, ecc);
+      q.addData(text);
+      q.make();
+      const n = q.getModuleCount();
+      found = { q, n, ecc, scale: Math.min(3, Math.floor(QR_MAX / n)) };
+      if (found.scale >= 2) break;
+    } catch (e) {}
+  }
+  return found && found.scale >= 1 ? found : null;
+}
+
+function drawQr(ctx, qr) {
+  const size = qr.n * qr.scale;
+  const y0 = Math.floor((H - size) / 2);
+  const x0 = W - y0 - size;
+  for (let r = 0; r < qr.n; r++)
+    for (let c = 0; c < qr.n; c++)
+      if (qr.q.isDark(r, c)) ctx.fillRect(x0 + c * qr.scale, y0 + r * qr.scale, qr.scale, qr.scale);
+  return x0;
+}
+
+// Returns what happened to the QR code so the editor can explain it
+export function render(canvas, card, qrText) {
   canvas.width = W;
   canvas.height = H;
   const ctx = canvas.getContext("2d", { willReadFrequently: true });
@@ -115,9 +145,17 @@ export function render(canvas, card) {
   ctx.fillStyle = "#000";
   ctx.textBaseline = "top";
 
-  const right = card.layout === "qr" ? W - H : W - PAD;
+  let right = W - PAD;
+  let qr = null;
+  if (card.layout === "qr") {
+    qr = makeQr(qrText);
+    right = qr ? drawQr(ctx, qr) - 12 : W - PAD;
+  }
   drawText(ctx, card, right);
   threshold(ctx, card.invert);
+  if (card.layout !== "qr") return { qr: "off" };
+  if (!qr) return { qr: "none" };
+  return { qr: qr.scale >= 2 ? "ok" : "dense", modules: qr.n, scale: qr.scale };
 }
 
 // 1 bit per pixel, rows top to bottom, most significant bit first, 1 = black
