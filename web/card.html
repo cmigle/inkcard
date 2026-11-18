@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>inkcard</title>
+  <meta name="description" content="A business card made with inkcard.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#f3f1eb">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/card.css">
+  <script type="module" src="js/card.js"></script>
+</head>
+<body class="card-body">
+  <main class="card-wrap">
+    <article class="card" id="card" hidden>
+      <div class="card-band" aria-hidden="true"></div>
+      <div class="avatar" id="avatar" aria-hidden="true"></div>
+      <h1 id="name"></h1>
+      <p class="card-role" id="role"></p>
+      <p class="card-loc" id="loc" hidden></p>
+      <p class="card-bio" id="bio" hidden></p>
+      <ul class="card-links" id="links"></ul>
+      <div class="card-actions">
+        <button type="button" class="btn accent" id="save">Save contact</button>
+        <button type="button" class="btn" id="share">Share</button>
+      </div>
+    </article>
+
+    <section class="card empty" id="empty" hidden>
+      <h1>No card in this link</h1>
+      <p>The link is incomplete or was cut off when it was copied. You can make your own card in a minute.</p>
+      <a class="btn primary" href="./">Make a card</a>
+    </section>
+
+    <p class="made"><a id="edit" href="./">Edit a copy</a><span aria-hidden="true">·</span><a href="./">Made with inkcard</a></p>
+  </main>
+</body>
+</html>
