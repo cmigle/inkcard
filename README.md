@@ -7,6 +7,8 @@ A business card that is a link and an e-ink screen. Fill in your details once an
 
 There is no backend and no account. The whole card is stored inside the link, after the `#`, so it never reaches a server.
 
+**Try it:** [cmigle.github.io/inkcard](https://cmigle.github.io/inkcard/) · [example card](https://cmigle.github.io/inkcard/card.html#aTY0xDsIwDAB_YvkBUL7ACChiZDfENEaNXdmJwvMRZWE8nXR3Mc-kmJjhRJ4HOSPrLMrscDVvZYhmTHQPuMmi0mOHSVrppEJwxswhs-JiY7_aYMdgDfNA0oytMD7F65ZthRp610DTr6kTvLb7kd9U14Wnh1WAPzj8_Ac)
+
 ![Editor with the live e-ink preview](docs/editor.jpg)
 
 <p>
