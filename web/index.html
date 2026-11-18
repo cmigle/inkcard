@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>inkcard · business card on e-ink</title>
+  <meta name="description" content="Make a business card that is a link and an e-ink screen. Share your portfolio page and show the same card on a 2.9 inch e-paper display.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+  <script type="module" src="js/editor.js"></script>
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="./"><span class="brand-mark" aria-hidden="true"></span>inkcard</a>
+    <nav>
+      <a href="#how">How it works</a>
+      <a href="https://github.com/cmigle/inkcard">GitHub</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <section class="intro">
+      <h1>Your business card, as a link and on e‑ink.</h1>
+      <p>Fill in what people should see. You get a link to your own card page and the same card drawn for a 2.9″ e‑paper screen. Everything lives inside the link, so nothing is stored on a server.</p>
+    </section>
+
+    <div class="editor">
+      <form id="form" class="panel form" autocomplete="off">
+        <fieldset>
+          <legend>You</legend>
+          <label class="field"><span>Name</span><input name="name" maxlength="40" required></label>
+          <div class="pair">
+            <label class="field"><span>Role</span><input name="role" maxlength="48"></label>
+            <label class="field"><span>Company or school</span><input name="org" maxlength="48"></label>
+          </div>
+          <label class="field"><span>Location</span><input name="location" maxlength="40"></label>
+          <label class="field"><span>Short bio <em id="bioCount"></em></span><textarea name="bio" maxlength="140" rows="3"></textarea></label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Contact</legend>
+          <div class="pair">
+            <label class="field"><span>Email</span><input name="email" type="email" maxlength="60" inputmode="email"></label>
+            <label class="field"><span>Phone</span><input name="phone" type="tel" maxlength="24"></label>
+          </div>
+          <label class="field"><span>Website</span><input name="web" maxlength="60" inputmode="url" placeholder="yourname.dev"></label>
+          <div class="pair">
+            <label class="field"><span>GitHub</span><input name="github" maxlength="40" placeholder="username"></label>
+            <label class="field"><span>LinkedIn</span><input name="linkedin" maxlength="60" placeholder="username"></label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Look</legend>
+          <div class="choice" role="radiogroup" aria-label="Screen layout">
+            <label><input type="radio" name="layout" value="qr"><span>Name and QR code</span></label>
+            <label><input type="radio" name="layout" value="name"><span>Name only</span></label>
+          </div>
+          <div class="pair">
+            <label class="field"><span>QR code opens</span>
+              <select name="qr">
+                <option value="card">This card's page</option>
+                <option value="web">My website</option>
+              </select>
+            </label>
+            <label class="field color"><span>Accent colour</span><input name="accent" type="color"></label>
+          </div>
+          <label class="check"><input type="checkbox" name="invert"><span>White on black screen</span></label>
+        </fieldset>
+      </form>
+
+      <aside class="preview">
+        <div class="device">
+          <div class="screen"><canvas id="screen" width="296" height="128" aria-label="E-ink screen preview"></canvas></div>
+          <span class="device-label">2.9″ e‑paper · 296 × 128</span>
+        </div>
+        <p class="note" id="qrStatus"></p>
+
+        <div class="panel share">
+          <label class="field"><span>Your card link</span><input id="link" readonly></label>
+          <div class="row">
+            <button type="button" class="btn primary" id="copy">Copy link</button>
+            <a class="btn" id="open" target="_blank" rel="noopener">Open card</a>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Put it on the screen</h2>
+          <p class="muted">Flash the firmware once, plug the ESP32 in over USB and press Send. Works in Chrome and Edge on a computer.</p>
+          <div class="row">
+            <button type="button" class="btn primary" id="send">Send to card</button>
+            <button type="button" class="btn" id="png">Download PNG</button>
+          </div>
+          <p class="note" id="sendStatus" role="status"></p>
+        </div>
+      </aside>
+    </div>
+
+    <section class="how" id="how">
+      <h2>How it works</h2>
+      <ol>
+        <li><strong>Fill in your card.</strong> Name, role, links. The preview shows exactly what the e‑ink screen will draw, pixel for pixel.</li>
+        <li><strong>Share the link.</strong> It opens your card page with a Save contact button. The QR code on the screen opens the same page.</li>
+        <li><strong>Send it to the screen.</strong> An ESP32 with a 2.9″ Waveshare panel keeps the image in flash. E‑ink holds it with the power off.</li>
+      </ol>
+    </section>
+  </main>
+
+  <footer class="foot wrap">
+    <span>inkcard · MIT licence</span>
+    <a href="https://github.com/cmigle/inkcard">Source and firmware</a>
+  </footer>
+</body>
+</html>
