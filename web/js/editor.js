@@ -1,5 +1,6 @@
 import { EMPTY, SAMPLE, FIELDS, encode, decode, cardUrl, website } from "./data.js";
-import { render, png, fontsReady } from "./screen.js";
+import { render, png, bitmap, fontsReady } from "./screen.js";
+import { supported, send } from "./serial.js";
 
 const form = document.getElementById("form");
 const screen = document.getElementById("screen");
@@ -12,6 +13,7 @@ const DRAFT = "inkcard-draft";
 
 let card = { ...SAMPLE };
 let code = "";
+let pending = 0;
 
 function fill(c) {
   for (const k of FIELDS) {
@@ -34,9 +36,13 @@ function read() {
 }
 
 async function update() {
-  card = read();
+  const id = ++pending;
+  const next = read();
+  const nextCode = await encode(next);
+  if (id !== pending) return; // a newer edit already started
+  card = next;
+  code = nextCode;
   bioCount.textContent = `${card.bio.length}/140`;
-  code = await encode(card);
   const url = cardUrl(code);
   linkEl.value = url;
   openEl.href = url;
@@ -64,6 +70,28 @@ document.getElementById("png").addEventListener("click", async () => {
   a.download = "inkcard.png";
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+});
+
+const sendBtn = document.getElementById("send");
+const sendStatus = document.getElementById("sendStatus");
+const say = (text, cls = "") => {
+  sendStatus.className = "note " + cls;
+  sendStatus.textContent = text;
+};
+if (!supported) {
+  sendBtn.disabled = true;
+  say("Sending needs Chrome or Edge on a computer. You can still download the PNG.");
+}
+sendBtn.addEventListener("click", async () => {
+  sendBtn.disabled = true;
+  try {
+    await send(bitmap(screen), say);
+    say("Done. The card shows this design now, even with the power off.", "ok");
+  } catch (e) {
+    say(e.name === "NotFoundError" ? "" : e.message, "warn");
+  } finally {
+    sendBtn.disabled = false;
+  }
 });
 
 copyEl.addEventListener("click", async () => {
