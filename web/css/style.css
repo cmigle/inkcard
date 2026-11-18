@@ -47,7 +47,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .form { display: grid; gap: 8px; }
 fieldset { border: 0; margin: 0; padding: 0 0 14px; display: grid; gap: 12px; }
 fieldset + fieldset { border-top: 1px solid var(--line); padding-top: 18px; }
-legend { font: 700 13px var(--f-head); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); padding: 0; margin-bottom: 12px; }
+legend { float: left; width: 100%; font: 700 13px var(--f-head); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); padding: 0; }
 .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 @media (max-width: 520px) { .pair { grid-template-columns: 1fr; } }
 .field { display: grid; gap: 6px; min-width: 0; }
