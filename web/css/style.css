@@ -12,6 +12,7 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { -webkit-text-size-adjust: 100%; }
 body { margin: 0; background: var(--paper); color: var(--ink); font: 400 15px/1.55 var(--f-body); }
 h1, h2 { font-family: var(--f-head); line-height: 1.1; margin: 0; }
