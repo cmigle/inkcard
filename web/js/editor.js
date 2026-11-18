@@ -1,10 +1,13 @@
-import { EMPTY, SAMPLE, FIELDS, encode, decode, cardUrl } from "./data.js";
+import { EMPTY, SAMPLE, FIELDS, encode, decode, cardUrl, website } from "./data.js";
+import { render, png, fontsReady } from "./screen.js";
 
 const form = document.getElementById("form");
+const screen = document.getElementById("screen");
 const linkEl = document.getElementById("link");
 const openEl = document.getElementById("open");
 const copyEl = document.getElementById("copy");
 const bioCount = document.getElementById("bioCount");
+const qrStatus = document.getElementById("qrStatus");
 const DRAFT = "inkcard-draft";
 
 let card = { ...SAMPLE };
@@ -37,8 +40,31 @@ async function update() {
   const url = cardUrl(code);
   linkEl.value = url;
   openEl.href = url;
+  draw();
   try { localStorage.setItem(DRAFT, code); } catch (e) {}
 }
+
+function draw() {
+  const target = card.qr === "web" && website(card) ? website(card) : linkEl.value;
+  const r = render(screen, card, target);
+  const msg = {
+    off: ["", ""],
+    ok: ["ok", `QR code: ${r.modules}×${r.modules} modules at ${r.scale} px each, easy to scan.`],
+    dense: ["warn", "The link is long, so the QR code is drawn at 1 px per module and may not scan. Shorten the bio or let the QR code open your website."],
+    none: ["warn", "The link is too long for a QR code on this screen. Shorten the bio or let the QR code open your website."]
+  }[r.qr];
+  if (r.qr === "ok" && card.invert) msg[1] += " Some phone cameras can't read white-on-black codes.";
+  qrStatus.className = "note " + msg[0];
+  qrStatus.textContent = msg[1];
+}
+
+document.getElementById("png").addEventListener("click", async () => {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(await png(screen));
+  a.download = "inkcard.png";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+});
 
 copyEl.addEventListener("click", async () => {
   try {
@@ -60,5 +86,7 @@ form.addEventListener("submit", e => e.preventDefault());
   if (start) history.replaceState(null, "", location.pathname);
   if (!start) try { start = await decode(localStorage.getItem(DRAFT)); } catch (e) {}
   fill(start || SAMPLE);
-  update();
+  await update();
+  await fontsReady();
+  draw();
 })();
